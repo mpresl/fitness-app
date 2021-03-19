@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mike Running App</title>
+</head>
+<body>
+<h1>Welcome To Mike Running!</h1>
+
+<h2>Your Activities</h2>
+<div th:unless="${#lists.isEmpty(activities)}">
+    <dl th:each="activity : ${activities}">
+        <dt class="activityHeadline">
+            <span th:text="${activity.getDate()}">Date</span>
+        </dt>
+    </dl>
+
+</div>
+</body>
+</html>
