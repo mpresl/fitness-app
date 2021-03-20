@@ -2,6 +2,7 @@ package com.running.app.services;
 
 import com.running.app.dto.AuthenticationResponse;
 import com.running.app.dto.LoginRequest;
+import com.running.app.dto.RefreshTokenRequest;
 import com.running.app.dto.RegisterRequest;
 import com.running.app.exceptions.MikeRunningException;
 import com.running.app.model.NotificationEmail;
@@ -33,6 +34,7 @@ public class AuthService {
   private final MailService mailService;
   private final AuthenticationManager authenticationManager;
   private final JwtProvider jwtProvider;
+  private final RefreshTokenService refreshTokenService;
 
 
   @Transactional
@@ -68,7 +70,6 @@ public class AuthService {
     fetchUserAndEnable(verificationToken.get());
   }
 
-  @Transactional
   private void fetchUserAndEnable(VerificationToken verificationToken) {
     String username = verificationToken.getUser().getUsername();
     User user = userRepository.findByUsername(username).orElseThrow(() -> new MikeRunningException("User not found " +
@@ -82,6 +83,22 @@ public class AuthService {
             loginRequest.getPassword()));
     SecurityContextHolder.getContext().setAuthentication(authenticate);
     String token = jwtProvider.generateToken(authenticate);
-    return new AuthenticationResponse(token, loginRequest.getUsername());
+    return AuthenticationResponse.builder()
+        .authenticationToken(token)
+        .refreshToken(refreshTokenService.generateRefreshToken().getToken())
+        .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+        .username(loginRequest.getUsername())
+        .build();
+  }
+
+  public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+    refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+    String token = jwtProvider.generateTokenWithUserName(refreshTokenRequest.getUsername());
+    return AuthenticationResponse.builder()
+        .authenticationToken(token)
+        .refreshToken(refreshTokenRequest.getRefreshToken())
+        .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+        .username(refreshTokenRequest.getUsername())
+        .build();
   }
 }

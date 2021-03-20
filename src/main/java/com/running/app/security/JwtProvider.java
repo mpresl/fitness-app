@@ -3,10 +3,12 @@ package com.running.app.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.core.internal.Function;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Date;
 
 import static io.jsonwebtoken.Jwts.parser;
@@ -15,16 +17,29 @@ import static io.jsonwebtoken.Jwts.parser;
 @Service
 public class JwtProvider {
 
-  private final String jwtkey = "MikeRunning";
+  @Value("${jwt.token.key}")
+  private String jwtkey;
+
+  @Value("${jwt.expiration.time}")
+  private Long jwtExpirationInMillis;
 
   public String generateToken(Authentication authentication) {
     org.springframework.security.core.userdetails.User principal =
         (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
     return Jwts.builder()
         .setSubject(principal.getUsername())
-        .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+        .setIssuedAt(Date.from(Instant.now()))
+        .setExpiration(Date.from(Instant.now().plusMillis(jwtExpirationInMillis)))
         .signWith(SignatureAlgorithm.HS256, jwtkey)
+        .compact();
+  }
+
+  public String generateTokenWithUserName(String username) {
+    return Jwts.builder()
+        .setSubject(username)
+        .setIssuedAt(Date.from(Instant.now()))
+        .signWith(SignatureAlgorithm.HS256, jwtkey)
+        .setExpiration(Date.from(Instant.now().plusMillis(jwtExpirationInMillis)))
         .compact();
   }
 
@@ -56,6 +71,10 @@ public class JwtProvider {
 
   private Boolean isTokenExpired(String token) {
     return extractExpiration(token).before(new Date());
+  }
+
+  public Long getJwtExpirationInMillis() {
+    return jwtExpirationInMillis;
   }
 
 }
