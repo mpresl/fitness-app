@@ -27,7 +27,5 @@ public class User {
   private String password;
   private String email;
   private Instant created;
-  @OneToMany(fetch = FetchType.LAZY)
-  private List<Activity> activityList;
   private boolean enabled;
 }
