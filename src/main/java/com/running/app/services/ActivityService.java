@@ -2,6 +2,7 @@ package com.running.app.services;
 
 import com.running.app.dto.ActivityRequest;
 import com.running.app.dto.ActivityResponse;
+import com.running.app.exceptions.MikeRunningException;
 import com.running.app.model.Activity;
 import com.running.app.model.ActivityType;
 import com.running.app.repositories.ActivityRepository;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -19,7 +22,6 @@ public class ActivityService {
   private final AuthService authService;
 
   public ActivityResponse save(ActivityRequest activityRequest) {
-
 
     Activity activity = Activity.builder()
         .distance(activityRequest.getDistance())
@@ -60,19 +62,14 @@ public class ActivityService {
     return  duration;
   }
 
-  // public List<RunResponse> getAll() {
-  //   return activityRepository.findAll()
-  //       .stream()
-  //       .filter(activity -> activity.getType().equals(ActivityType.RUN))
-  //       .map(a -> runToRunResponse(a))
-  //       .collect(Collectors.toList());
-  // }
+  public List<ActivityResponse> getAll() {
+    return activityRepository.findAll().stream()
+        .map(this::activityToResponse)
+        .collect(Collectors.toList());
+  }
 
-
-  // @Transactional(readOnly = true)
-  // public List<RunDto> getAll() {
-  //   return activityRepository.findAll()
-  //       .stream()
-  //       .collect(toList());
-  // }
+  public ActivityResponse findById(Long id) {
+    return activityToResponse(activityRepository.findById(id).orElseThrow(() -> new MikeRunningException("No Activity" +
+        " with ID: " + id + " exists!"))) ;
+  }
 }
