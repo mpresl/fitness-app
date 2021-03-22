@@ -5,6 +5,8 @@ import com.running.app.dto.ActivityRequest;
 import com.running.app.dto.ActivityResponse;
 import com.running.app.services.ActivityService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,18 +25,24 @@ public class ActivityController {
   private final ActivityService activityService;
 
   @GetMapping
-  public List<ActivityResponse> getAllActivities() {
-    return activityService.getAll();
+  public ResponseEntity<List<ActivityResponse>> getAllActivities() {
+    return new ResponseEntity<>(activityService.getAll(), HttpStatus.OK);
   }
 
   @GetMapping("/{id}")
-  public ActivityResponse getRun(@PathVariable Long id) {
-    return activityService.findById(id);
+  public ResponseEntity<?> getActivity(@PathVariable Long id) {
+    return new ResponseEntity<>(activityService.findById(id), HttpStatus.OK);
   }
 
   @PostMapping
-  public ActivityResponse create(@RequestBody @Valid ActivityRequest activityRequest) {
-    return activityService.save(activityRequest);
+  public ResponseEntity<Void> create(@RequestBody @Valid ActivityRequest activityRequest) {
+    activityService.save(activityRequest);
+    return new ResponseEntity<>(HttpStatus.CREATED);
+  }
+
+  @GetMapping("by-user/{name}")
+  public ResponseEntity<?> getActivitiesByUsername(@PathVariable String name){
+    return new ResponseEntity<>(activityService.getAllByUser(name), HttpStatus.OK);
   }
 
 }

@@ -5,8 +5,11 @@ import com.running.app.dto.ActivityResponse;
 import com.running.app.exceptions.MikeRunningException;
 import com.running.app.model.Activity;
 import com.running.app.model.ActivityType;
+import com.running.app.model.User;
 import com.running.app.repositories.ActivityRepository;
+import com.running.app.repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -19,9 +22,10 @@ import java.util.stream.Collectors;
 public class ActivityService {
 
   private final ActivityRepository activityRepository;
+  private final UserRepository userRepository;
   private final AuthService authService;
 
-  public ActivityResponse save(ActivityRequest activityRequest) {
+  public void save(ActivityRequest activityRequest) {
 
     Activity activity = Activity.builder()
         .distance(activityRequest.getDistance())
@@ -33,8 +37,7 @@ public class ActivityService {
         .build();
 
     activityRepository.save(activity);
-    return activityToResponse(activity);
-  }
+    }
 
   private ActivityResponse activityToResponse (Activity activity) {
     return ActivityResponse.builder()
@@ -71,5 +74,14 @@ public class ActivityService {
   public ActivityResponse findById(Long id) {
     return activityToResponse(activityRepository.findById(id).orElseThrow(() -> new MikeRunningException("No Activity" +
         " with ID: " + id + " exists!"))) ;
+  }
+
+  public List<ActivityResponse> getAllByUser(String username) {
+    User user = userRepository.findByUsername(username)
+        .orElseThrow(() -> new UsernameNotFoundException(username));
+
+    return activityRepository.findAllByUser(user).stream()
+        .map(this::activityToResponse)
+        .collect(Collectors.toList());
   }
 }
