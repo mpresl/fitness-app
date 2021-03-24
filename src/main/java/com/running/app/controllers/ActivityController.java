@@ -3,10 +3,12 @@ package com.running.app.controllers;
 
 import com.running.app.dto.ActivityRequest;
 import com.running.app.dto.ActivityResponse;
+import com.running.app.model.Activity;
 import com.running.app.services.ActivityService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,6 +45,11 @@ public class ActivityController {
   @GetMapping("by-user/{name}")
   public ResponseEntity<?> getActivitiesByUsername(@PathVariable String name){
     return new ResponseEntity<>(activityService.getAllByUser(name), HttpStatus.OK);
+  }
+
+  @GetMapping("by-user/{name}/{type}")
+  public ResponseEntity<?> getAllActivitiesByUserAndType(@PathVariable String name, @PathVariable String type) {
+    return new ResponseEntity<>(activityService.getAllTypeByUser(name, type), HttpStatus.OK);
   }
 
 }

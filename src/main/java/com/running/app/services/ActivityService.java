@@ -84,4 +84,23 @@ public class ActivityService {
         .map(this::activityToResponse)
         .collect(Collectors.toList());
   }
+
+  public List<ActivityResponse> getAllTypeByUser(String name, String type) {
+    User user = userRepository.findByUsername(name)
+        .orElseThrow(() -> new UsernameNotFoundException(name));
+
+    if (type.equalsIgnoreCase("run")) {
+      return activityRepository.findAllByUser(user).stream()
+          .filter(activity -> activity.getType().equals(ActivityType.RUN))
+          .map(this::activityToResponse)
+          .collect(Collectors.toList());
+    } else if (type.equalsIgnoreCase("swim")) {
+      return activityRepository.findAllByUser(user).stream()
+          .filter(activity -> activity.getType().equals(ActivityType.SWIM))
+          .map(this::activityToResponse)
+          .collect(Collectors.toList());
+    }else {
+      throw new MikeRunningException("Invalid Activity Type");
+    }
+  }
 }
