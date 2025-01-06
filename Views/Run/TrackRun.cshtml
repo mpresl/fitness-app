@@ -1,5 +1,16 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model FitnessApp.Models.Run
+
+<h1>Track Your Run</h1>
+<form asp-action="TrackRun" method="post">
+    <div>
+        <label asp-for="Distance"></label>
+        <input asp-for="Distance" />
+        <span asp-validation-for="Distance"></span>
+    </div>
+    <div>
+        <label asp-for="Time"></label>
+        <input asp-for="Time" />
+        <span asp-validation-for="Time"></span>
+    </div>
+    <button type="submit">Submit</button>
+</form>
