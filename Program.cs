@@ -1,3 +1,6 @@
+using FitnessApp.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace FitnessApp
 {
     public class Program
