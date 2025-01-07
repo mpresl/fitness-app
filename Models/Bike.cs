@@ -1,7 +1,6 @@
 ﻿namespace FitnessApp.Models
 {
-    public class Run : Activity
+    public class Bike : Activity
     {
-
     }
 }

@@ -11,5 +11,7 @@ namespace FitnessApp.Data
         }
 
         public DbSet<Run> Runs { get; set; }
+        public DbSet<Swim> Swims { get; set; }
+        public DbSet<Bike> Bikes { get; set; }
     }
 }

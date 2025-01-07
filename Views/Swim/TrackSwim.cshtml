@@ -1,0 +1,16 @@
+﻿@model FitnessApp.Models.Swim
+
+<h1>Track Your Swim</h1>
+<form asp-action="TrackSwim" method="post">
+    <div>
+        <label asp-for="Distance"></label>
+        <input asp-for="Distance" />
+        <span asp-validation-for="Distance"></span>
+    </div>
+    <div>
+        <label asp-for="Time"></label>
+        <input asp-for="Time" />
+        <span asp-validation-for="Time"></span>
+    </div>
+    <button type="submit">Submit</button>
+</form>
