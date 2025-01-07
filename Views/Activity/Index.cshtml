@@ -1,0 +1,27 @@
+﻿@model FitnessApp.Models.ActivityViewModel
+
+<h1>All Activities</h1>
+
+<h2>Runs</h2>
+<ul>
+    @foreach (var run in Model.Runs)
+    {
+        <li>Distance: @run.Distance km, Time: @run.Time minutes</li>
+    }
+</ul>
+
+<h2>Swims</h2>
+<ul>
+    @foreach (var swim in Model.Swims)
+    {
+        <li>Distance: @swim.Distance m, Time: @swim.Time minutes</li>
+    }
+</ul>
+
+<h2>Bikes</h2>
+<ul>
+    @foreach (var bike in Model.Bikes)
+    {
+        <li>Distance: @bike.Distance km, Time: @bike.Time minutes</li>
+    }
+</ul>
